@@ -6,66 +6,131 @@
 
 # 🚨 SathiAI — AI-Powered Disaster Resilience Platform
 
-> **Real-time crowd-sourced disaster reporting, emergency SOS alerts, AI-powered news verification, and NGO coordination — all in one platform.**
+> Real-time crowd-sourced disaster reporting, emergency SOS alerts, AI-powered news verification, Razorpay donations, and NGO coordination — all in one platform.
 
 🔗 **Live:** [https://sathiai.web.app](https://sathiai.web.app)
 
 ---
 
-## 📋 Problem Statement
-
-During natural disasters, affected communities face critical delays in receiving alerts, reporting incidents, and accessing verified information. Official data sources like NDMA aren't easily accessible, misinformation spreads rapidly, and there's no unified platform for real-time disaster reporting, emergency SOS, and NGO coordination. **This information gap costs lives.**
-
-## 💡 Solution
-
-SathiAI bridges this gap with a comprehensive AI-powered disaster resilience platform combining crowd-sourced reporting, official government data, and intelligent automation.
-
----
-
 ## ✨ Features
 
-### 🗺️ Interactive Disaster Map
-- Real-time Google Maps visualization of all disasters and emergencies
-- Auto-fetches NDMA earthquake data with marker clustering
-- Color-coded markers by type (earthquake, flood, fire, cyclone, etc.)
-- Click markers for full details with info windows
+### 🆘 One-Tap SOS Emergency Button
+- **Single tap** instantly sends an emergency alert
+- Auto-captures GPS location and reverse-geocodes to readable address
+- Auto-fills user's name and generates emergency message: *"HELP! I am in an emergency! My name is [Name]. Location: [Address]"*
+- Appears in the live emergency feed within seconds
+- Pulsing red button always visible in the header for instant access
 
-### 🆘 One-Tap SOS Emergency
-- **Single button press** sends emergency alert instantly
-- Auto-captures GPS location with reverse geocoding
-- Auto-fills user name and emergency message
-- Appears in the emergency feed within seconds
+### 🗺️ Interactive Google Maps Dashboard
+- Real-time map visualization of all disasters, emergencies, and earthquakes
+- Auto-fetches **NDMA (National Disaster Management Authority)** earthquake data via CAP feed
+- Color-coded markers by disaster type (earthquake 🟤, flood 🔵, fire 🔴, cyclone 🟣, landslide 🟠, etc.)
+- Click any marker for full details via info windows
+- Tab-aware display — switch between disasters/emergencies and NDMA earthquakes
+- Auto-saves new NDMA earthquakes to Firestore with duplicate detection
 
-### 📢 Disaster & Emergency Reporting
-- Crowd-sourced disaster reports with image uploads (via Cloudinary)
-- Emergency reports with auto/manual location detection
-- Real-time Firestore-powered live feed with breaking news banner
-- Image preview, type categorization, and timestamp tracking
+### 📢 Crowd-Sourced Disaster Reporting
+- Report disasters with title, description, type selection, and image upload
+- Cloudinary CDN integration for fast, reliable image hosting
+- Auto-detect GPS location with reverse geocoding
+- Real-time Firestore-powered live feed with infinite scroll
+- Breaking news banner for latest critical reports
+- Timestamp tracking with relative time display ("2 min ago")
 
-### 🤖 AI-Powered Features
-- **News Verification:** Gemini AI analyzes news articles for authenticity, detects misinformation with confidence scoring
-- **Resilience Chatbot:** AI assistant provides real-time disaster guidance, safety tips, and emergency procedures
+### � Emergency Reporting
+- Dedicated emergency submission form separate from disasters
+- Two location modes: **Auto-detect GPS** or **Manual address search** (forward geocoding)
+- Image upload support with preview
+- Type categorization (medical, fire, flood, accident, etc.)
+- Live emergency feed with real-time updates
 
-### 🔔 Push Notifications (FCM)
-- Firebase Cloud Messaging for instant push alerts
-- Auto-notifications when new disasters/emergencies are added to Firestore
-- Admin panel for manual broadcast notifications
-- Topic-based messaging to all subscribed users
+### 🤖 AI-Powered Resilience Chatbot
+- **Google Grok AI** powered conversational assistant
+- Provides real-time disaster safety guidance and emergency procedures
+- Answers questions about first aid, evacuation, and survival tips
+- Floating chat bubble with slide-in animation
+- Chat history within session
+- Typing indicator with animated dots
 
-### 🏢 NGO Directory
-- Verified NGO registration and listing
-- Admin approval workflow
-- Contact details, coverage areas, and service descriptions
+### 📰 AI News Verification (Fake News Detection)
+- Submit news articles/headlines for **Grok AI** authenticity analysis
+- Returns confidence score and detailed reasoning
+- Detects misinformation, sensationalism, and unverified claims
+- Verified news gets published to the community news feed
+- Real-time AI processing status indicator
 
-### 💰 Donation System
-- Direct financial support for disaster relief
-- Receipt generation and download
+### 💰 Razorpay Donation System
+- Integrated **Razorpay payment gateway** for disaster relief donations
+- Preset donation amounts (₹100, ₹500, ₹1000) or custom amount
+- Secure payment processing with Razorpay checkout modal
+- **Auto-generated digital receipt** on successful payment
+- Receipt includes: Payment ID, amount, date, donor name, email
+- **Download receipt as PNG** — canvas-rendered receipt image with SathiAI branding, payment details, QR-style layout, and "Payment Successful ✅" badge
+- Receipt modal with full payment summary
 
-### 📱 Android APK
-- Native Android wrapper via WebView
-- FCM push notification support
-- Notification permission handling for Android 13+
-- Geolocation and camera access
+### 🔔 Firebase Cloud Messaging (FCM) Push Notifications
+- Real-time push notifications via **Firebase Cloud Messaging**
+- Topic-based messaging — all users subscribe to `all_users` topic
+- **Auto-notifications**: Backend Firestore listeners detect new disasters/emergencies and auto-send push alerts
+- **Manual broadcast**: Admin notification dashboard for custom alerts
+- Notification types: disaster (🔴), emergency (🔵), general (🟣) with color-coded display
+- High-priority notifications with vibration and sound
+- Android notification channel: `sathiai_alerts`
+
+### 🏢 NGO Directory & Registration
+- NGOs can register with name, description, contact, website, services, and image
+- **Admin approval workflow** — NGOs appear only after admin verification
+- Verified NGO listing with cards showing details and contact info
+- Image upload via Cloudinary
+- Real-time Firestore-powered NGO feed
+
+### � Authentication System
+- **Email/password** authentication via Firebase Auth
+- Sign-up with display name
+- Login/Logout with session persistence
+- User avatar and name displayed in header
+- Protected actions (report, SOS, donate) require login
+
+### 📱 Progressive Web App (PWA)
+- **Installable** — "Add to Home Screen" prompt with install button in header
+- **Service Worker** with offline caching strategy
+- **Web App Manifest** with app name, icons (192x192, 512x512), theme color
+- Standalone display mode — opens like a native app
+- Works on mobile and desktop browsers
+
+### 📱 Native Android APK
+- Android app wrapping the PWA via **WebView**
+- Full **FCM push notification** support with `MyFirebaseMessagingService`
+- Notification permission request on launch (Android 13+ / TIRAMISU)
+- Geolocation permission handling
+- Camera and file upload access
+- Custom progress bar during page loads
+- Back button navigation within WebView
+- External links open in device browser
+- Status bar theming
+- `compileSdk` and `targetSdk` set to **36**
+
+### 🛡️ Admin Panel
+- Password-protected admin dashboard (`/admin.html`)
+- Approve/reject NGO registrations
+- View all pending and approved NGOs
+- Separate notification admin panel (`server/public/admin.html`) for FCM broadcasts
+
+### 📡 NDMA Earthquake Data Integration
+- Auto-fetches earthquakes from **NDMA CAP (Common Alerting Protocol)** feed
+- Parses XML earthquake data with magnitude, location, depth, and time
+- Filters earthquakes by magnitude threshold
+- Auto-saves to Firestore with duplicate checking
+- Displays on map with earthquake-specific markers
+
+### 🎨 UI/UX
+- **Dark theme** with glassmorphism design
+- Gradient accents (red/orange for disasters, blue for emergencies, violet for chatbot)
+- Smooth animations: fade-in tabs, slide-up toasts, pulse effects, shimmer loading
+- Responsive design — works on mobile (380px+), tablet, and desktop
+- Custom scrollbar styling
+- Tab-based navigation (Disasters, Emergencies, NGOs, News, Earthquakes)
+- Toast notification system for user feedback
 
 ---
 
@@ -73,16 +138,17 @@ SathiAI bridges this gap with a comprehensive AI-powered disaster resilience pla
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | HTML5, JavaScript (ES Modules), Tailwind CSS v4, Vite |
+| **Frontend** | HTML5, JavaScript (ES Modules), Tailwind CSS v4, Vite 6 |
 | **Backend** | Firebase (Firestore, Auth, Hosting), Node.js + Express |
-| **AI** | Google Gemini AI (news verification + chatbot) |
+| **AI** |  AI (news verification + chatbot) |
 | **Maps** | Google Maps JavaScript API |
+| **Payments** | Razorpay Payment Gateway |
 | **Notifications** | Firebase Cloud Messaging (FCM) |
 | **Images** | Cloudinary CDN |
-| **Geocoding** | Nominatim (OpenStreetMap) |
+| **Geocoding** | Nominatim / OpenStreetMap (reverse + forward) |
 | **Mobile** | Android (Java, WebView, Firebase Messaging SDK) |
 | **PWA** | Service Worker, Web App Manifest |
-| **Data Source** | NDMA CAP Feed (earthquakes) |
+| **Data Source** | NDMA CAP Feed (Government earthquake data) |
 
 ---
 
@@ -90,39 +156,43 @@ SathiAI bridges this gap with a comprehensive AI-powered disaster resilience pla
 
 ```
 sathiai/
-├── index.html                 # Main app HTML
-├── admin.html                 # Admin panel HTML
-├── vite.config.js             # Vite + Tailwind v4 config
+├── index.html                 # Main app (map, feeds, forms, modals)
+├── admin.html                 # Admin panel (NGO approval)
+├── vite.config.js             # Vite + Tailwind v4 + NDMA proxy
 ├── package.json               # Dependencies
 ├── firebase.json              # Firebase hosting config
 ├── firestore.rules            # Firestore security rules
+├── .env.example               # Environment variables template
+│
 ├── src/
-│   ├── main.js                # App orchestration & event handling
-│   ├── style.css              # Tailwind imports + custom CSS
-│   ├── firebase-init.js       # Firebase initialization
-│   ├── auth.js                # Email/password authentication
+│   ├── main.js                # App orchestration (1400+ lines)
+│   ├── style.css              # Tailwind imports + custom animations
+│   ├── firebase-init.js       # Firebase SDK initialization
+│   ├── auth.js                # Email/password auth
 │   ├── disaster.js            # Disaster CRUD + NDMA fetch
 │   ├── emergency.js           # Emergency CRUD + geocoding
 │   ├── ngo.js                 # NGO registration & listing
-│   ├── news.js                # News verification with AI
-│   ├── chatbot.js             # Gemini AI chatbot
+│   ├── news.js                # AI news verification
+│   ├── chatbot.js             #  AI chatbot
 │   └── admin.js               # Admin panel logic
+│
 ├── public/
 │   ├── manifest.json          # PWA manifest
-│   ├── sw.js                  # Service worker
+│   ├── sw.js                  # Service worker (offline caching)
 │   ├── icon-192.svg           # App icon 192x192
 │   └── icon-512.svg           # App icon 512x512
-├── server/
-│   ├── server.js              # Express + FCM notification server
+│
+├── server/                    # Notification server
+│   ├── server.js              # Express + Firebase Admin + FCM
 │   ├── package.json           # Server dependencies
 │   └── public/
-│       └── admin.html         # Notification admin dashboard
-└── APK/
-    ├── build.gradle.kts       # Project-level Gradle
-    ├── gradle/
-    │   └── libs.versions.toml # Version catalog
+│       └── admin.html         # FCM notification dashboard
+│
+└── APK/                       # Android project
+    ├── build.gradle.kts
+    ├── gradle/libs.versions.toml
     └── app/
-        ├── build.gradle.kts   # App-level Gradle (SDK 36)
+        ├── build.gradle.kts
         └── src/main/
             ├── AndroidManifest.xml
             ├── java/com/mobo/sathiai/
@@ -136,14 +206,16 @@ sathiai/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Run
 
 ### Prerequisites
-- Node.js 18+
-- Firebase CLI (`npm install -g firebase-tools`)
-- A Firebase project with Firestore, Auth, and FCM enabled
-- Google Maps API key
-- Cloudinary account
+- **Node.js 18+**
+- **Firebase CLI** → `npm install -g firebase-tools`
+- A Firebase project with **Firestore**, **Auth**, and **FCM** enabled
+- **Google Maps API key**
+- **Cloudinary** account (cloud name + upload preset)
+- **Razorpay** account (key ID)
+- **GROK AI** API key
 
 ### 1. Clone & Install
 
@@ -153,12 +225,12 @@ cd sathiai
 npm install
 ```
 
-### 2. Configure Firebase
+### 2. Configure Environment
 
-Create a `.env` file in the root:
+Copy `.env.example` to `.env` and fill in your keys:
 
 ```env
-VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
 VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
@@ -167,7 +239,8 @@ VITE_FIREBASE_APP_ID=your_app_id
 VITE_GOOGLE_MAPS_KEY=your_google_maps_key
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 VITE_CLOUDINARY_UPLOAD_PRESET=your_preset
-VITE_GEMINI_API_KEY=your_gemini_key
+VITE_GROK_API_KEY=your_grok_api_key
+VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 VITE_ADMIN_PASSWORD=your_admin_password
 ```
 
@@ -179,60 +252,73 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173)
 
-### 4. Build & Deploy
+### 4. Build for Production
 
 ```bash
 npm run build
+```
+
+### 5. Deploy to Firebase Hosting
+
+```bash
+firebase login
 firebase deploy --only hosting
 ```
 
-### 5. Notification Server (Optional)
+### 6. Run Notification Server (Optional)
 
 ```bash
 cd server
 npm install
-# Add your Firebase service account key
+# Place your Firebase service account JSON key in the server directory
 node server.js
 ```
 
-The notification admin dashboard opens at [http://localhost:3000](http://localhost:3000)
+Notification admin dashboard → [http://localhost:3000](http://localhost:3000)
 
-### 6. Android APK (Optional)
+### 7. Build Android APK (Optional)
 
-1. Open the `APK/` folder in Android Studio
+1. Open `APK/` folder in **Android Studio**
 2. Add your `google-services.json` to `APK/app/`
-3. Build and run on device/emulator
+3. Sync Gradle and build
+4. Run on device or emulator
 
 ---
 
-## 📸 Screenshots
+## � Security
 
-| Feature | Description |
-|---------|-------------|
-| 🗺️ **Live Map** | Interactive Google Maps with disaster markers |
-| 🆘 **SOS Button** | One-tap emergency with auto-location |
-| 📊 **Dashboard** | Real-time disaster & emergency feeds |
-| 🤖 **AI Chatbot** | Gemini-powered disaster guidance |
-| 📰 **News Verify** | AI misinformation detection |
-| 🔔 **Notifications** | FCM push alerts admin panel |
-
----
-
-## 🔐 Security
-
-- Firebase Authentication (email/password)
-- Firestore security rules for data access control
+- Firebase Authentication for user identity
+- Firestore security rules for read/write access control
 - Admin panel protected with password
-- Service account keys excluded from repository
+- Razorpay handles payment security (PCI DSS compliant)
+- Service account keys excluded from repository via `.gitignore`
+- Environment variables for all sensitive API keys
 
 ---
 
-## 👥 Team
+## 🌐 API Integrations
 
-Built with ❤️ for disaster resilience.
+| API | Purpose |
+|-----|---------|
+| Firebase Firestore | Real-time database for all data |
+| Firebase Auth | User authentication |
+| Firebase Hosting | Web app deployment |
+| Firebase Cloud Messaging | Push notifications |
+| Google Maps JS API | Interactive map and markers |
+| Grok AI | News verification + chatbot |
+| Razorpay Checkout | Payment processing |
+| Cloudinary Upload | Image hosting CDN |
+| Nominatim | Reverse/forward geocoding |
+| NDMA CAP Feed | Government earthquake data |
 
 ---
 
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Built with ❤️ for disaster resilience — because timely information saves lives.
+</p>
