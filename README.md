@@ -12,6 +12,12 @@
 
 ---
 
+<p align="center">
+  <img src="HONE.jpeg" alt="SathiAI Android App" width="280" style="vertical-align: middle; margin: 10px;" />
+  <img src="DESKTOP.png" alt="SathiAI Desktop View" width="550" style="vertical-align: middle; margin: 10px;" />
+  <br>
+  <em>Left: Android App (Java/FCM) | Right: Web Dashboard (Vite/Tailwind v4)</em>
+</p>
 ## ✨ Features
 
 ### 🆘 One-Tap SOS Emergency Button
@@ -322,3 +328,4 @@ This project is open source and available under the [MIT License](LICENSE).
 <p align="center">
   Built with ❤️ for disaster resilience — because timely information saves lives.
 </p>
+
