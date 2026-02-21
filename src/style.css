@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+/* ── Marquee animation ── */
+@keyframes marquee {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 15s linear infinite;
+}
+
+/* ── Tabs ── */
+.tab-btn {
+    color: #6b7280;
+    border-bottom: 2px solid transparent;
+    transition: all 0.25s;
+}
+
+.tab-btn:hover {
+    color: #d1d5db;
+}
+
+.tab-btn.active {
+    color: #f87171;
+    border-bottom-color: #ef4444;
+}
+
+/* ── Scrollbar hide ── */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ── Disaster card ── */
+.disaster-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.disaster-card:hover {
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.06);
+}
+
+/* ── Tab content fade-in ── */
+.tab-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Toast ── */
+.toast {
+    animation: slideUp 0.4s ease-out, fadeOut 0.4s ease-in 2.6s forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* ── Chatbot ── */
+.chatbot-fab-pulse {
+    animation: fabPulse 2s ease-in-out infinite;
+}
+
+@keyframes fabPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 12px rgba(124, 58, 237, 0);
+    }
+}
+
+.chatbot-window-animate {
+    animation: chatSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes chatSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#chatbot-messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+#chatbot-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#chatbot-messages::-webkit-scrollbar-thumb {
+    background: rgba(124, 58, 237, 0.3);
+    border-radius: 4px;
+}
+
+#chatbot-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(124, 58, 237, 0.5);
+}
+
+.chatbot-typing .animate-bounce {
+    animation-duration: 0.6s;
+}
+
+.chatbot-response strong {
+    color: #c4b5fd;
+}
+
+/* ── Shimmer loading ── */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.shimmer-loading {
+    background: linear-gradient(90deg, transparent 25%, rgba(255, 255, 255, 0.06), transparent 75%) 0 0 / 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* ── Glow pulse ── */
+@keyframes glow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* ── Header blur ── */
+header {
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    background: rgba(3, 7, 18, 0.85) !important;
+}
+
+/* ── Custom select arrow ── */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 36px;
+}
+
+/* ── Prevent iOS zoom ── */
+input,
+textarea,
+select {
+    font-size: 16px !important;
+}
+
+/* ── Mobile overrides ── */
+@media (max-width: 640px) {
+    .tab-btn {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    nav .scrollbar-hide {
+        gap: 0;
+    }
+
+    .disaster-card:hover {
+        transform: none;
+    }
+
+    #chatbot-window {
+        width: calc(100vw - 24px) !important;
+        max-height: 70vh !important;
+        bottom: 80px !important;
+        right: 12px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .tab-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+/* ── Global scrollbar ── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Selection ── */
+::selection {
+    background: rgba(239, 68, 68, 0.3);
+    color: #fff;
+}
+
+/* ── Tap highlight ── */
+button,
+[role="button"] {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Float animation ── */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.float-animate {
+    animation: float 3s ease-in-out infinite;
+}

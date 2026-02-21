@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SathiAI — Push Notification Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #030712;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 1.5rem;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: #9ca3af;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(55, 65, 81, 0.5);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 0.75rem;
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #8b5cf6;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-emergency {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .status {
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .status.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .history-item {
+            padding: 1rem;
+            background: rgba(31, 41, 55, 0.5);
+            border: 1px solid rgba(55, 65, 81, 0.3);
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .history-item h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .history-item p {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .history-item .meta {
+            font-size: 0.7rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-disaster {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .badge-emergency {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .badge-general {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid rgba(55, 65, 81, 0.3);
+            border-radius: 0.75rem;
+        }
+
+        .stat-num {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #9ca3af;
+            margin-top: 0.25rem;
+        }
+
+        .quick-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .online-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bell"></i> SathiAI Notification Center</h1>
+            <p><span class="online-dot"></span>Server connected — Listening for new reports</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num" id="total-sent">0</div>
+                <div class="stat-label">Total Sent</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" style="color:#f87171" id="disaster-count">0</div>
+                <div class="stat-label">Disasters</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" style="color:#60a5fa" id="emergency-count">0</div>
+                <div class="stat-label">Emergencies</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-paper-plane" style="color:#a78bfa"></i> Send Push Notification</h2>
+
+            <div class="quick-btns">
+                <button class="btn btn-danger" onclick="quickSend('disaster')">
+                    <i class="fas fa-triangle-exclamation"></i> Disaster Alert
+                </button>
+                <button class="btn btn-emergency" onclick="quickSend('emergency')">
+                    <i class="fas fa-truck-medical"></i> Emergency Alert
+                </button>
+            </div>
+
+            <label>Notification Title</label>
+            <input type="text" id="notif-title" placeholder="e.g. Earthquake Alert - Delhi NCR">
+
+            <label>Message Body</label>
+            <textarea id="notif-body"
+                placeholder="e.g. A 5.2 magnitude earthquake detected near Delhi. Move to open areas immediately. Stay safe!"></textarea>
+
+            <label>Type</label>
+            <select id="notif-type">
+                <option value="general">🔔 General</option>
+                <option value="disaster">⚠️ Disaster</option>
+                <option value="emergency">🚨 Emergency</option>
+            </select>
+
+            <button class="btn btn-primary" id="btn-send" onclick="sendNotification()">
+                <i class="fas fa-paper-plane"></i> Send to All Users
+            </button>
+
+            <div class="status" id="status"></div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-clock-rotate-left" style="color:#60a5fa"></i> Notification History</h2>
+            <div id="history">
+                <div id="loading"><i class="fas fa-spinner fa-spin"></i> Loading history...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sendNotification() {
+            const title = document.getElementById('notif-title').value.trim();
+            const body = document.getElementById('notif-body').value.trim();
+            const type = document.getElementById('notif-type').value;
+            const btn = document.getElementById('btn-send');
+            const status = document.getElementById('status');
+
+            if (!title || !body) {
+                status.className = 'status error';
+                status.textContent = 'Please fill in both title and body';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            status.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/send-notification', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, body, type })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    status.className = 'status success';
+                    status.textContent = '✅ Notification sent to all users!';
+                    document.getElementById('notif-title').value = '';
+                    document.getElementById('notif-body').value = '';
+                    loadHistory();
+                } else {
+                    status.className = 'status error';
+                    status.textContent = '❌ ' + (data.error || 'Failed to send');
+                }
+            } catch (err) {
+                status.className = 'status error';
+                status.textContent = '❌ Network error: ' + err.message;
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send to All Users';
+        }
+
+        function quickSend(type) {
+            document.getElementById('notif-type').value = type;
+            const titleEl = document.getElementById('notif-title');
+            const bodyEl = document.getElementById('notif-body');
+            if (type === 'disaster') {
+                titleEl.value = '⚠️ Disaster Alert';
+                titleEl.focus();
+            } else {
+                titleEl.value = '🚨 Emergency Alert';
+                titleEl.focus();
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const res = await fetch('/api/notifications');
+                const data = await res.json();
+                const container = document.getElementById('history');
+
+                document.getElementById('total-sent').textContent = data.length;
+                document.getElementById('disaster-count').textContent = data.filter(n => n.type === 'disaster').length;
+                document.getElementById('emergency-count').textContent = data.filter(n => n.type === 'emergency').length;
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#6b7280;padding:2rem">No notifications sent yet</p>';
+                    return;
+                }
+
+                container.innerHTML = data.map(n => {
+                    const badgeClass = n.type === 'disaster' ? 'badge-disaster' : n.type === 'emergency' ? 'badge-emergency' : 'badge-general';
+                    const time = n.sentAt ? new Date(n.sentAt._seconds * 1000).toLocaleString() : 'Unknown';
+                    return `
+                        <div class="history-item">
+                            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem">
+                                <span class="badge ${badgeClass}">${n.type || 'general'}</span>
+                                <h4>${escHtml(n.title)}</h4>
+                            </div>
+                            <p>${escHtml(n.body)}</p>
+                            <div class="meta">
+                                <span><i class="fas fa-clock"></i> ${time}</span>
+                            </div>
+                        </div>`;
+                }).join('');
+            } catch (err) {
+                document.getElementById('history').innerHTML = '<p style="color:#f87171;text-align:center">Failed to load history</p>';
+            }
+        }
+
+        function escHtml(str) {
+            if (!str) return '';
+            const d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        loadHistory();
+    </script>
+</body>
+
+</html>
