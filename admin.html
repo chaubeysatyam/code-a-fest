@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sathi AI — Admin Panel</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🛡️</text></svg>" />
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
+
+    <!-- Login Gate -->
+    <div id="admin-login" class="flex items-center justify-center min-h-screen">
+        <div class="text-center space-y-6 max-w-sm w-full px-4">
+            <div
+                class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mx-auto">
+                <span class="text-4xl">🛡️</span>
+            </div>
+            <h1 class="text-2xl font-bold">Admin Panel</h1>
+            <p class="text-gray-400 text-sm">Enter admin password to continue</p>
+            <input type="password" id="admin-password" placeholder="Admin password..."
+                class="w-full px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" />
+            <button id="btn-admin-login"
+                class="w-full py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all hover:shadow-indigo-500/40 cursor-pointer">
+                Enter
+            </button>
+            <p id="admin-error" class="hidden text-red-400 text-sm"></p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 backdrop-blur-xl bg-gray-950/80 border-b border-gray-800/50">
+            <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🛡️</span>
+                    <h1
+                        class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                        Sathi AI — Admin
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-400">
+                        <span id="pending-count" class="text-yellow-400 font-bold">0</span> pending
+                    </span>
+                    <a href="/" class="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">← Back to
+                        App</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="max-w-6xl mx-auto px-4 pt-6">
+            <div class="flex gap-2 mb-6">
+                <button
+                    class="admin-tab active px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer bg-yellow-500/15 text-yellow-400 border border-yellow-500/20"
+                    data-status="pending">
+                    🕐 Pending
+                </button>
+                <button
+                    class="admin-tab px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer bg-gray-800 text-gray-400 border border-gray-700"
+                    data-status="approved">
+                    ✅ Approved
+                </button>
+                <button
+                    class="admin-tab px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer bg-gray-800 text-gray-400 border border-gray-700"
+                    data-status="declined">
+                    ❌ Declined
+                </button>
+                <button
+                    class="admin-tab px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer bg-gray-800 text-gray-400 border border-gray-700"
+                    data-status="all">
+                    📋 All
+                </button>
+            </div>
+        </div>
+
+        <!-- NGO List -->
+        <div class="max-w-6xl mx-auto px-4 pb-12">
+            <div id="admin-ngo-list" class="space-y-4">
+                <div class="flex items-center justify-center py-16 text-gray-500">
+                    <p>Loading NGO applications...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/admin.js"></script>
+</body>
+
+</html>

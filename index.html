@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SathiAI - Real-time disaster reporting and community alert platform" />
+    <title>SathiAI - Disaster Alert Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxzAMl8D2WOwxVgHYpCEdX0D1KTm31dpk"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#ef4444" />
+    <link rel="apple-touch-icon" href="/icon-192.svg" />
+</head>
+
+<body class="bg-gray-950 text-white font-['Inter',sans-serif] min-h-screen">
+
+    <!-- ========== LOGIN SCREEN ========== -->
+    <div id="login-screen"
+        class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
+        <div class="absolute top-1/4 -left-20 w-72 h-72 bg-red-500/8 rounded-full blur-[100px] animate-pulse"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-orange-500/6 rounded-full blur-[120px] animate-pulse"
+            style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/5 rounded-full blur-[100px] animate-pulse"
+            style="animation-delay: 2s;"></div>
+
+        <div class="relative z-10 text-center space-y-8 px-6">
+            <!-- Logo / Title -->
+            <div class="space-y-3">
+                <div
+                    class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 shadow-2xl shadow-red-500/30 mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                </div>
+                <h1
+                    class="text-5xl font-black tracking-tight bg-gradient-to-r from-red-400 via-orange-400 to-amber-400 bg-clip-text text-transparent">
+                    SathiAI
+                </h1>
+                <p class="text-gray-400 text-base font-light max-w-sm mx-auto leading-relaxed">
+                    Real-time disaster reporting & community alert platform
+                </p>
+            </div>
+
+            <!-- Auth Form -->
+            <div class="w-full max-w-sm mx-auto space-y-4">
+                <!-- Name (sign-up only) -->
+                <div id="name-field" class="hidden">
+                    <input type="text" id="auth-name" placeholder="Full Name"
+                        class="w-full px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
+                </div>
+
+                <input type="email" id="auth-email" placeholder="Email address" required
+                    class="w-full px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
+
+                <input type="password" id="auth-password" placeholder="Password (min 6 chars)" required
+                    class="w-full px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
+
+                <button id="btn-auth-submit"
+                    class="w-full py-3.5 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/25 transition-all duration-300 hover:shadow-red-500/40 active:scale-95 cursor-pointer flex items-center justify-center gap-2">
+                    <span id="auth-btn-text">Sign In</span>
+                    <div id="auth-spinner"
+                        class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                    </div>
+                </button>
+
+                <p id="auth-error" class="hidden text-red-400 text-sm text-center"></p>
+
+                <p class="text-gray-500 text-sm text-center">
+                    <span id="auth-toggle-text">Don't have an account?</span>
+                    <button id="btn-auth-toggle"
+                        class="text-red-400 hover:text-red-300 font-medium ml-1 cursor-pointer">Sign Up</button>
+                </p>
+            </div>
+
+            <p class="text-gray-600 text-sm">Protect your community. Report in seconds.</p>
+        </div>
+    </div>
+
+    <!-- ========== MAIN APP (hidden until login) ========== -->
+    <div id="app-screen" class="hidden min-h-screen flex flex-col">
+
+        <!-- Header with user info -->
+        <header
+            class="sticky top-0 z-50 bg-gray-950/70 backdrop-blur-2xl border-b border-gray-800/30 shadow-lg shadow-black/20">
+            <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-lg shadow-red-500/25">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                    </div>
+                    <h1
+                        class="text-lg font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
+                        SathiAI</h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button id="btn-pwa-install"
+                        class="hidden items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500/15 to-cyan-500/15 border border-emerald-500/25 hover:border-emerald-500/50 text-emerald-400 hover:text-emerald-300 transition-all text-xs font-medium cursor-pointer hover:scale-105 active:scale-95"
+                        title="Install App">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-4-4m4 4l4-4" />
+                        </svg>
+
+                    </button>
+                    <button id="btn-sos"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-all text-xs font-bold cursor-pointer active:scale-95 shadow-lg shadow-red-500/30 animate-pulse"
+                        title="Quick SOS — Send emergency with your location">
+                        <i class="fas fa-exclamation-triangle text-[10px]"></i> SOS
+                    </button>
+                    <button id="btn-donate"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-pink-500/15 to-red-500/15 border border-pink-500/25 hover:border-pink-500/50 text-pink-400 hover:text-pink-300 transition-all text-xs font-medium cursor-pointer hover:scale-105 active:scale-95">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        Donate
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <img id="user-avatar" class="w-8 h-8 rounded-full ring-2 ring-gray-700" src="" alt="User" />
+                        <span id="user-name" class="text-sm text-gray-300 hidden sm:block"></span>
+                    </div>
+                    <button id="btn-logout"
+                        class="text-xs px-3 py-1.5 rounded-lg bg-gray-800/60 hover:bg-gray-700/80 text-gray-400 hover:text-white transition-all duration-200 cursor-pointer border border-gray-700/50 hover:border-gray-600">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Breaking News Banner -->
+        <div id="breaking-news"
+            class="hidden overflow-hidden bg-gradient-to-r from-red-700 via-red-600 to-red-700 relative">
+            <div class="flex items-center gap-3 py-2 px-4">
+                <span
+                    class="flex-shrink-0 px-2 py-0.5 bg-white text-red-600 text-xs font-black rounded uppercase tracking-wider animate-pulse">
+                    BREAKING
+                </span>
+                <div class="overflow-hidden flex-1">
+                    <p id="breaking-text" class="text-sm font-medium text-white whitespace-nowrap animate-marquee"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <nav class="border-b border-gray-800/30 bg-gray-950/50 backdrop-blur-xl sticky top-[57px] z-40">
+            <div class="max-w-5xl mx-auto px-4 flex gap-0.5 overflow-x-auto scrollbar-hide">
+                <button
+                    class="tab-btn active px-4 py-3 text-sm font-medium whitespace-nowrap transition-all relative cursor-pointer"
+                    data-tab="disaster">
+                    <i class="fas fa-exclamation-triangle mr-1"></i> Disasters
+                </button>
+                <button
+                    class="tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap transition-all relative cursor-pointer"
+                    data-tab="emergency">
+                    <i class="fas fa-life-ring mr-1"></i> Emergency
+                </button>
+                <button
+                    class="tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap transition-all relative cursor-pointer"
+                    data-tab="news">
+                    <i class="fas fa-newspaper mr-1"></i> News
+                </button>
+                <button
+                    class="tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap transition-all relative cursor-pointer"
+                    data-tab="ngos">
+                    <i class="fas fa-handshake mr-1"></i> NGOs
+                </button>
+                <button
+                    class="tab-btn px-4 py-3 text-sm font-medium whitespace-nowrap transition-all relative cursor-pointer"
+                    data-tab="community">
+                    <i class="fas fa-users mr-1"></i> Community
+                </button>
+            </div>
+        </nav>
+
+        <!-- Tab Contents -->
+        <main class="flex-1 max-w-5xl mx-auto w-full px-4 py-6">
+
+            <!-- DISASTER TAB -->
+            <section id="tab-disaster" class="tab-content">
+                <!-- Report Button -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2
+                        class="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                        Disaster Reports</h2>
+                    <div class="flex items-center gap-2">
+                        <button id="btn-open-map"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all active:scale-95 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                            Map
+                        </button>
+                        <button id="btn-open-report"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all active:scale-95 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Report Disaster
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Form Modal -->
+                <div id="report-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="modal-overlay"></div>
+                    <div
+                        class="relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div class="p-6 space-y-5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold">Report a Disaster</h3>
+                                <button id="btn-close-modal"
+                                    class="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form id="disaster-form" class="space-y-4">
+                                <!-- Image Upload -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Photo Evidence</label>
+                                    <label id="image-upload-area"
+                                        class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:border-red-500/50 hover:bg-red-500/5 transition-all">
+                                        <div id="upload-placeholder" class="flex flex-col items-center gap-2">
+                                            <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span class="text-sm text-gray-400">Tap to upload image</span>
+                                        </div>
+                                        <img id="image-preview" class="hidden w-full h-full object-cover rounded-xl" />
+                                        <input type="file" id="image-input" accept="image/*" class="hidden" />
+                                    </label>
+                                </div>
+
+                                <!-- Disaster Type -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Disaster Type</label>
+                                    <select id="disaster-type" required
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all appearance-none">
+                                        <option value="" disabled selected>Select type...</option>
+                                        <option value="Flood">Flood</option>
+                                        <option value="Earthquake">Earthquake</option>
+                                        <option value="Fire">Fire</option>
+                                        <option value="Cyclone">Cyclone</option>
+                                        <option value="Landslide">Landslide</option>
+                                        <option value="Drought">Drought</option>
+                                        <option value="Industrial">Industrial Accident</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Title -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                                    <input type="text" id="disaster-title" required placeholder="Brief title..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all" />
+                                </div>
+
+                                <!-- Description -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                                    <textarea id="disaster-desc" required rows="3"
+                                        placeholder="Describe what happened..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+
+                                <!-- Location (auto-captured) -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2"><i
+                                            class="fas fa-map-marker-alt text-red-400 mr-1"></i> Location</label>
+                                    <div id="location-status" class="flex items-center gap-2 text-sm text-gray-400">
+                                        <div
+                                            class="w-4 h-4 border-2 border-gray-500 border-t-red-500 rounded-full animate-spin">
+                                        </div>
+                                        Detecting your location...
+                                    </div>
+                                    <p id="location-text" class="hidden text-sm text-green-400 mt-1"></p>
+                                    <input type="hidden" id="location-lat" />
+                                    <input type="hidden" id="location-lng" />
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" id="btn-submit-disaster"
+                                    class="w-full py-3.5 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-red-500/25 transition-all hover:shadow-red-500/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2">
+                                    <span id="submit-text"><i class="fas fa-paper-plane mr-1"></i> Post Disaster
+                                        Report</span>
+                                    <div id="submit-spinner"
+                                        class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disaster Feed -->
+                <div id="disaster-feed" class="space-y-4">
+                    <div class="flex items-center justify-center py-12 text-gray-500">
+                        <div class="text-center space-y-2">
+                            <svg class="w-12 h-12 mx-auto text-gray-700" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                            </svg>
+                            <p>No disaster reports yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EMERGENCY TAB -->
+            <section id="tab-emergency" class="tab-content hidden">
+                <!-- Report Button -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2
+                        class="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                        Emergency Reports</h2>
+                    <div class="flex items-center gap-2">
+                        <button id="btn-open-emergency-map"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all active:scale-95 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                            Map
+                        </button>
+                        <button id="btn-open-emergency"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all active:scale-95 cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Report Emergency
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Emergency Report Modal -->
+                <div id="emergency-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="emergency-modal-overlay"></div>
+                    <div
+                        class="relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div class="p-6 space-y-5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold">Report an Emergency</h3>
+                                <button id="btn-close-emergency-modal"
+                                    class="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form id="emergency-form" class="space-y-4">
+                                <!-- Image Upload -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Photo Evidence</label>
+                                    <label id="emergency-image-upload-area"
+                                        class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all">
+                                        <div id="emergency-upload-placeholder" class="flex flex-col items-center gap-2">
+                                            <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span class="text-sm text-gray-400">Tap to upload image</span>
+                                        </div>
+                                        <img id="emergency-image-preview"
+                                            class="hidden w-full h-full object-cover rounded-xl" />
+                                        <input type="file" id="emergency-image-input" accept="image/*" class="hidden" />
+                                    </label>
+                                </div>
+
+                                <!-- Emergency Type -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Emergency Type</label>
+                                    <select id="emergency-type" required
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none">
+                                        <option value="" disabled selected>Select type...</option>
+                                        <option value="Accident">Accident</option>
+                                        <option value="Fire">Fire</option>
+                                        <option value="Stampede">Stampede</option>
+                                        <option value="Medical">Medical Emergency</option>
+                                        <option value="Collapse">Building Collapse</option>
+                                        <option value="Gas Leak">Gas Leak</option>
+                                        <option value="Drowning">Drowning</option>
+                                        <option value="Electrocution">Electrocution</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Title -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                                    <input type="text" id="emergency-title" required placeholder="Brief title..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                                </div>
+
+                                <!-- Description -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                                    <textarea id="emergency-desc" required rows="3"
+                                        placeholder="Describe the emergency..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+
+                                <!-- Location (flexible: auto-detect OR type) -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2"><i
+                                            class="fas fa-map-marker-alt text-blue-400 mr-1"></i> Location</label>
+                                    <div class="flex gap-2 mb-2">
+                                        <button type="button" id="btn-emergency-auto-loc"
+                                            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg hover:bg-blue-500/20 transition-all cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            Use my location
+                                        </button>
+                                        <button type="button" id="btn-emergency-type-loc"
+                                            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm bg-gray-800 text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-700 transition-all cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                            Type location
+                                        </button>
+                                    </div>
+
+                                    <!-- Auto-detect status -->
+                                    <div id="emergency-loc-auto" class="hidden">
+                                        <div id="emergency-loc-status"
+                                            class="flex items-center gap-2 text-sm text-gray-400">
+                                            <div
+                                                class="w-4 h-4 border-2 border-gray-500 border-t-blue-500 rounded-full animate-spin">
+                                            </div>
+                                            Detecting your location...
+                                        </div>
+                                        <p id="emergency-loc-result" class="hidden text-sm text-green-400 mt-1"></p>
+                                    </div>
+
+                                    <!-- Type location input -->
+                                    <div id="emergency-loc-type" class="hidden">
+                                        <div class="flex gap-2">
+                                            <input type="text" id="emergency-loc-search"
+                                                placeholder="Type address or place name..."
+                                                class="flex-1 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm" />
+                                            <button type="button" id="btn-emergency-search-loc"
+                                                class="px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-xl transition-all cursor-pointer">
+                                                Search
+                                            </button>
+                                        </div>
+                                        <p id="emergency-search-result" class="hidden text-sm text-green-400 mt-2"></p>
+                                        <p id="emergency-search-error" class="hidden text-sm text-red-400 mt-2"></p>
+                                    </div>
+
+                                    <input type="hidden" id="emergency-lat" />
+                                    <input type="hidden" id="emergency-lng" />
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" id="btn-submit-emergency"
+                                    class="w-full py-3.5 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 transition-all hover:shadow-blue-500/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2">
+                                    <span id="emergency-submit-text"><i class="fas fa-life-ring mr-1"></i> Post
+                                        Emergency Report</span>
+                                    <div id="emergency-submit-spinner"
+                                        class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Feed -->
+                <div id="emergency-feed" class="space-y-4">
+                    <div class="flex items-center justify-center py-12 text-gray-500">
+                        <div class="text-center space-y-2">
+                            <svg class="w-12 h-12 mx-auto text-gray-700" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                            </svg>
+                            <p>No emergency reports yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEWS TAB -->
+            <section id="tab-news" class="tab-content hidden">
+                <!-- Header + Submit Button -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2
+                            class="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                            News Feed</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">AI-verified <i
+                                class="fas fa-shield-halved text-purple-400 text-[10px]"></i> Fake news filtered out</p>
+                    </div>
+                    <button id="btn-open-news"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-xl shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all active:scale-95 cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Submit News
+                    </button>
+                </div>
+
+                <!-- News Submit Modal -->
+                <div id="news-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="news-modal-overlay"></div>
+                    <div
+                        class="relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div class="p-6 space-y-5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold">Submit News</h3>
+                                <button id="btn-close-news-modal"
+                                    class="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div
+                                class="flex items-center gap-2 px-3 py-2 bg-purple-500/10 border border-purple-500/20 rounded-xl">
+                                <i class="fas fa-shield-halved text-purple-400 text-sm"></i>
+                                <p class="text-xs text-purple-300">Your news will be verified by AI before posting. Fake
+                                    or misleading news will be rejected.</p>
+                            </div>
+
+                            <form id="news-form" class="space-y-4">
+                                <!-- Headline -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Headline *</label>
+                                    <input type="text" id="news-headline" required
+                                        placeholder="Enter the news headline..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" />
+                                </div>
+
+                                <!-- Content -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Full News Content
+                                        *</label>
+                                    <textarea id="news-content" required rows="5"
+                                        placeholder="Write the complete news content with details, location, sources..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+
+                                <!-- AI Verification Status (shown during/after verification) -->
+                                <div id="news-ai-status" class="hidden">
+                                    <div id="news-ai-verifying"
+                                        class="flex items-center gap-3 px-4 py-3 bg-gray-800/80 border border-gray-700 rounded-xl">
+                                        <div
+                                            class="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin">
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-purple-400">AI is verifying your news...
+                                            </p>
+                                            <p class="text-xs text-gray-500">Checking facts, sources, and credibility
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div id="news-ai-result" class="hidden mt-2"></div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" id="btn-submit-news"
+                                    class="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg shadow-purple-500/25 transition-all hover:shadow-purple-500/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2">
+                                    <span id="news-submit-text"><i class="fas fa-shield-halved mr-1"></i> Verify & Post
+                                        News</span>
+                                    <div id="news-submit-spinner"
+                                        class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Feed -->
+                <div id="news-feed" class="space-y-4">
+                    <div class="flex items-center justify-center py-12 text-gray-500">
+                        <div class="text-center space-y-2">
+                            <svg class="w-12 h-12 mx-auto text-gray-700" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                            </svg>
+                            <p>No verified news yet. Be the first to share!</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NGOS TAB -->
+            <section id="tab-ngos" class="tab-content hidden">
+                <!-- Header + Register Button -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2
+                        class="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                        NGO Directory</h2>
+                    <button id="btn-open-ngo"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-xl shadow-lg shadow-green-500/25 hover:shadow-green-500/40 transition-all active:scale-95 cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Register NGO
+                    </button>
+                </div>
+
+                <!-- NGO Registration Modal -->
+                <div id="ngo-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="ngo-modal-overlay"></div>
+                    <div
+                        class="relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                        <div class="p-6 space-y-5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold">Register Your NGO</h3>
+                                <button id="btn-close-ngo-modal"
+                                    class="text-gray-400 hover:text-white transition-colors cursor-pointer">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <p class="text-sm text-gray-400">Fill in your organization details. An admin will review and
+                                approve your application.</p>
+
+                            <form id="ngo-form" class="space-y-4">
+                                <!-- Logo/Image -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Organization Logo /
+                                        Photo</label>
+                                    <label
+                                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:border-green-500/50 hover:bg-green-500/5 transition-all">
+                                        <div id="ngo-upload-placeholder" class="flex flex-col items-center gap-2">
+                                            <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <span class="text-sm text-gray-400">Upload logo or photo</span>
+                                        </div>
+                                        <img id="ngo-image-preview"
+                                            class="hidden w-full h-full object-cover rounded-xl" />
+                                        <input type="file" id="ngo-image-input" accept="image/*" class="hidden" />
+                                    </label>
+                                </div>
+
+                                <!-- Org Name -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Organization Name
+                                        *</label>
+                                    <input type="text" id="ngo-name" required placeholder="e.g. Red Cross Society"
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all" />
+                                </div>
+
+                                <!-- Two columns: Reg Number + Founded -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Registration No.
+                                            *</label>
+                                        <input type="text" id="ngo-reg-number" required placeholder="NGO/DARPAN No."
+                                            class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Founded Year
+                                            *</label>
+                                        <input type="text" id="ngo-founded" required placeholder="e.g. 2015"
+                                            class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm" />
+                                    </div>
+                                </div>
+
+                                <!-- Category -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Category *</label>
+                                    <select id="ngo-category" required
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all appearance-none">
+                                        <option value="" disabled selected>Select category...</option>
+                                        <option value="Disaster Relief">Disaster Relief</option>
+                                        <option value="Medical Aid">Medical Aid</option>
+                                        <option value="Food & Shelter">Food & Shelter</option>
+                                        <option value="Education">Education</option>
+                                        <option value="Child Welfare">Child Welfare</option>
+                                        <option value="Women Empowerment">Women Empowerment</option>
+                                        <option value="Animal Rescue">Animal Rescue</option>
+                                        <option value="Environment">Environment</option>
+                                        <option value="Human Rights">Human Rights</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Description -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Description *</label>
+                                    <textarea id="ngo-description" required rows="3"
+                                        placeholder="What does your NGO do? Mission, services, areas served..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+
+                                <!-- Contact: Email + Phone -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Contact Email
+                                            *</label>
+                                        <input type="email" id="ngo-email" required placeholder="ngo@email.com"
+                                            class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Phone *</label>
+                                        <input type="tel" id="ngo-phone" required placeholder="+91 XXXXX XXXXX"
+                                            class="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-sm" />
+                                    </div>
+                                </div>
+
+                                <!-- Address -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Address *</label>
+                                    <input type="text" id="ngo-address" required placeholder="Full address..."
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all" />
+                                </div>
+
+                                <!-- Website -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Website
+                                        (optional)</label>
+                                    <input type="url" id="ngo-website" placeholder="https://yourorganization.org"
+                                        class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all" />
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" id="btn-submit-ngo"
+                                    class="w-full py-3.5 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-green-500/25 transition-all hover:shadow-green-500/40 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2">
+                                    <span id="ngo-submit-text"><i class="fas fa-clipboard-check mr-1"></i> Submit for
+                                        Review</span>
+                                    <div id="ngo-submit-spinner"
+                                        class="hidden w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin">
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approved NGO Cards -->
+                <div id="ngo-feed" class="space-y-4">
+                    <div class="flex items-center justify-center py-12 text-gray-500">
+                        <div class="text-center space-y-2">
+                            <svg class="w-12 h-12 mx-auto text-gray-700" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <p>No verified NGOs yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMMUNITY TAB -->
+            <section id="tab-community" class="tab-content hidden">
+                <div class="flex flex-col items-center justify-center py-24 text-center">
+                    <div
+                        class="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-500/20 to-yellow-500/20 flex items-center justify-center mb-6">
+                        <i class="fas fa-users text-5xl text-amber-400"></i>
+                    </div>
+                    <h2
+                        class="text-2xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-2">
+                        Community Hub</h2>
+                    <p class="text-gray-400 mb-6 max-w-sm">Community discussions, volunteer coordination, and mutual aid
+                        networks.</p>
+                    <span
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-medium border border-amber-500/20">
+                        <div class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                        Coming Soon
+                    </span>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="map-modal" class="hidden fixed inset-0 z-50 flex flex-col">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" id="map-modal-overlay"></div>
+        <div
+            class="relative flex-1 flex flex-col m-3 sm:m-6 rounded-2xl overflow-hidden border border-gray-700 shadow-2xl">
+            <div class="flex items-center justify-between px-5 py-3 bg-gray-900 border-b border-gray-800">
+                <h3 class="text-lg font-bold flex items-center gap-2">
+                    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                    </svg>
+                    <span id="map-title">Disaster Map</span>
+                </h3>
+                <button id="btn-close-map"
+                    class="text-gray-400 hover:text-white transition-colors cursor-pointer p-1 rounded-lg hover:bg-gray-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="google-map" class="flex-1 bg-gray-800" style="min-height:300px;"></div>
+        </div>
+    </div>
+
+    <!-- Donate Amount Modal -->
+    <div id="donate-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="donate-modal-overlay"></div>
+        <div class="relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-sm">
+            <div class="p-6 space-y-5 text-center">
+                <div
+                    class="w-16 h-16 rounded-full bg-gradient-to-br from-pink-500/20 to-red-500/20 flex items-center justify-center mx-auto">
+                    <svg class="w-8 h-8 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold">Support Disaster Relief</h3>
+                <p class="text-sm text-gray-400">Your donation helps communities recover from disasters</p>
+                <div class="grid grid-cols-3 gap-2">
+                    <button
+                        class="donate-preset px-3 py-2.5 rounded-xl bg-gray-800 border border-gray-700 hover:border-pink-500/50 hover:bg-pink-500/10 text-white font-medium transition-all cursor-pointer"
+                        data-amount="100">₹100</button>
+                    <button
+                        class="donate-preset px-3 py-2.5 rounded-xl bg-gray-800 border border-gray-700 hover:border-pink-500/50 hover:bg-pink-500/10 text-white font-medium transition-all cursor-pointer"
+                        data-amount="500">₹500</button>
+                    <button
+                        class="donate-preset px-3 py-2.5 rounded-xl bg-gray-800 border border-gray-700 hover:border-pink-500/50 hover:bg-pink-500/10 text-white font-medium transition-all cursor-pointer"
+                        data-amount="1000">₹1000</button>
+                </div>
+                <input type="number" id="donate-amount" placeholder="Or enter custom amount (₹)"
+                    class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all text-center text-lg font-semibold"
+                    min="1" />
+                <button id="btn-pay-now"
+                    class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold rounded-xl shadow-lg shadow-pink-500/25 transition-all hover:shadow-pink-500/40 cursor-pointer">
+                    💝 Pay Now
+                </button>
+                <button id="btn-close-donate"
+                    class="text-sm text-gray-500 hover:text-gray-300 transition-colors cursor-pointer">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Receipt Modal -->
+    <div id="receipt-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" id="receipt-modal-overlay"></div>
+        <div class="relative bg-gray-900 rounded-2xl border border-gray-800 shadow-2xl w-full max-w-sm">
+            <div class="p-6 space-y-4 text-center">
+                <div class="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-green-400">Thank You! 🎉</h3>
+                <p class="text-sm text-gray-400">Your donation was successful</p>
+                <div id="receipt-details" class="bg-gray-800/80 rounded-xl p-4 text-left space-y-2 text-sm">
+                </div>
+                <div class="flex gap-2">
+                    <button id="btn-download-receipt"
+                        class="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold rounded-xl transition-all cursor-pointer text-sm">
+                        📥 Download Receipt
+                    </button>
+                    <button id="btn-close-receipt"
+                        class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium rounded-xl transition-all cursor-pointer text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== RESILIENCE AI CHATBOT ========== -->
+    <!-- Floating Chat Button -->
+    <button id="chatbot-fab"
+        class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-2xl shadow-violet-500/30 flex items-center justify-center active:scale-95 transition-all duration-300 cursor-pointer chatbot-fab-pulse">
+        <i class="fas fa-robot text-xl"></i>
+    </button>
+
+    <div id="chatbot-window"
+        class="hidden fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[540px] max-h-[calc(100vh-8rem)] rounded-2xl border border-gray-700/40 shadow-2xl shadow-black/60 flex flex-col overflow-hidden chatbot-window-animate"
+        style="background: rgba(12, 12, 25, 0.97); backdrop-filter: blur(24px);">
+
+        <div class="flex items-center justify-between px-4 py-3.5 border-b border-violet-500/15"
+            style="background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(79,70,229,0.1));">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                        <i class="fas fa-robot text-white text-sm"></i>
+                    </div>
+                    <div
+                        class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-900">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white">Resilience AI</h3>
+                    <p class="text-[10px] text-green-400/90 flex items-center gap-1">
+                        <i class="fas fa-circle text-[4px]"></i> Online &middot; Ready to help
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-1">
+                <button id="chatbot-clear"
+                    class="text-gray-400 hover:text-white transition-colors cursor-pointer p-2 rounded-lg hover:bg-white/5"
+                    title="Clear chat">
+                    <i class="fas fa-trash-alt text-xs"></i>
+                </button>
+                <button id="chatbot-close"
+                    class="text-gray-400 hover:text-white transition-colors cursor-pointer p-2 rounded-lg hover:bg-white/5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="chatbot-messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-4 scroll-smooth">
+            <div class="flex gap-2.5 items-start">
+                <div
+                    class="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 flex-shrink-0 flex items-center justify-center mt-0.5 shadow-sm shadow-violet-500/20">
+                    <i class="fas fa-robot text-white text-[10px]"></i>
+                </div>
+                <div class="space-y-2 max-w-[85%]">
+                    <div class="bg-gray-800/60 rounded-2xl rounded-tl-md px-4 py-3 border border-gray-700/30">
+                        <p class="text-sm text-gray-100 leading-relaxed font-medium">Hey there! 👋 I'm <strong
+                                class="text-violet-400">Resilience AI</strong></p>
+                        <p class="text-sm text-gray-300 leading-relaxed mt-1">Your disaster safety companion. I can help
+                            with:</p>
+                        <div class="mt-2 space-y-1.5">
+                            <div class="flex items-center gap-2 text-[13px] text-gray-300">
+                                <i class="fas fa-search text-violet-400 text-[10px] w-4"></i>
+                                <span>Disaster & emergency info</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[13px] text-gray-300">
+                                <i class="fas fa-check-circle text-green-400 text-[10px] w-4"></i>
+                                <span>Do's and Don'ts during crises</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[13px] text-gray-300">
+                                <i class="fas fa-first-aid text-red-400 text-[10px] w-4"></i>
+                                <span>First aid & safety tips</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-[13px] text-gray-300">
+                                <i class="fas fa-globe text-blue-400 text-[10px] w-4"></i>
+                                <span>I speak your language!</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button
+                            onclick="document.getElementById('chatbot-input').value='What to do during an earthquake?';document.getElementById('chatbot-send').click()"
+                            class="text-[11px] px-3 py-1.5 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/20 hover:bg-violet-500/20 transition-colors cursor-pointer">
+                            <i class="fas fa-house-crack text-[9px] mr-1"></i> Earthquake tips
+                        </button>
+                        <button
+                            onclick="document.getElementById('chatbot-input').value='First aid for burns';document.getElementById('chatbot-send').click()"
+                            class="text-[11px] px-3 py-1.5 rounded-full bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer">
+                            <i class="fas fa-first-aid text-[9px] mr-1"></i> First aid
+                        </button>
+                        <button
+                            onclick="document.getElementById('chatbot-input').value='Emergency helpline numbers India';document.getElementById('chatbot-send').click()"
+                            class="text-[11px] px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20 hover:bg-blue-500/20 transition-colors cursor-pointer">
+                            <i class="fas fa-phone text-[9px] mr-1"></i> Helplines
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-3 py-3 border-t border-gray-700/30" style="background: rgba(12,12,25,0.9);">
+            <div class="flex items-center gap-2">
+                <input type="text" id="chatbot-input" placeholder="Ask me anything..."
+                    class="flex-1 px-4 py-2.5 bg-gray-800/50 border border-gray-700/40 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-500/30 transition-all" />
+                <button id="chatbot-send"
+                    class="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white flex items-center justify-center hover:from-violet-500 hover:to-indigo-500 transition-all cursor-pointer active:scale-95 shadow-lg shadow-violet-500/20">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+            <p class="text-[10px] text-gray-600 text-center mt-1.5">
+                Powered by Resilience AI <i class="fas fa-bolt text-violet-500/50 text-[8px]"></i>
+            </p>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.firebase/
+*.log
+.DS_Store
+Thumbs.db
+sathiai-firebase-adminsdk-*.json
+server/node_modules/
